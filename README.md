@@ -20,7 +20,7 @@ If user fields are not deleted during account deletion, they are anonymized as f
 1. Clone the repository into the `/admin/tool/user_anonymizer` directory of your Moodle installation:
 2. Visit **Site administration → Notifications** to trigger the installation, or run `admin/cli/upgrade.php`.
 
-### Voraussetzungen
+# Dependencies
 - No external dependencies.
 
 # Configuration #
@@ -58,7 +58,7 @@ This plugin does not provide any web service functions.
 
 # License #
 
-This plugin is lecensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).
+This plugin is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
 # Credits #
 
