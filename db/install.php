@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Install script for tool_user_anonymizer.
+ * Install script for tool_deleted_user_anonymizer.
  *
- * @package     tool_user_anonymizer
+ * @package     tool_deleted_user_anonymizer
  * @copyright   2025 oncampus GmbH <support@oncampus.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function xmldb_tool_user_anonymizer_install(): bool {
+function xmldb_tool_deleted_user_anonymizer_install(): bool {
     return true;
 }

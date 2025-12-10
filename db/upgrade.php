@@ -17,7 +17,7 @@
 /**
  * Plugin upgrade steps are defined here.
  *
- * @package     tool_user_anonymizer
+ * @package     tool_deleted_user_anonymizer
  * @category    upgrade
  * @copyright   2025 Ramona Rommel <ramona.rommel@oncampus.de>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,6 +29,6 @@
  * @param int $oldversion The version number the plugin is upgrading from.
  * @return bool True on successful upgrade.
  */
-function xmldb_tool_user_anonymizer_upgrade(int $oldversion): bool {
+function xmldb_tool_deleted_user_anonymizer_upgrade(int $oldversion): bool {
     return true;
 }

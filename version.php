@@ -17,15 +17,15 @@
 /**
  * Plugin version and other meta-data are defined here.
  *
- * @package     tool_user_anonymizer
+ * @package     tool_deleted_user_anonymizer
  * @copyright   2025 oncampus GmbH <support@oncampus.de>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'tool_user_anonymizer';
-$plugin->release = '0.1.0';
-$plugin->version = 2025120400;
-$plugin->requires = 2022112800;
-$plugin->maturity = MATURITY_ALPHA;
+$plugin->component = 'tool_deleted_user_anonymizer';
+$plugin->release = '4.5.0';
+$plugin->version = 2025121000;
+$plugin->requires = 2024100708;
+$plugin->maturity = MATURITY_STABLE;

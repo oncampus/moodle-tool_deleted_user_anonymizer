@@ -39,18 +39,11 @@ Navigate to **Site administration → Plugins → Admin tools → Delay for anon
 
 Under **Site administration → Plugins → Admin tools → Immediate anonymization of all previously deleted users** admins can manually trigger anonymization for all users already marked as deleted.
 
-# Capabilities #
-
-| Capability name               | Description                                                           | Default role     |
-| ----------------------------- | --------------------------------------------------------------------- | ---------------- |
-| `tool/user_anonymizer:manage` | Allows users to configure settings and manually trigger anonymization | Managers, Admins |
-
-
 # Cronjobs #
 
 | Task Class                                          | Description                                                 | Default execution interval |
 | --------------------------------------------------- | ----------------------------------------------------------- | -------------------------- |
-| `tool_user_anonymizer\task\scheduled_anonymization` | Retrieves users marked for anonymization and processes them | Several times per day      |
+| `tool_deleted_user_anonymizer\task\scheduled_anonymization` | Retrieves users marked for anonymization and processes them | Several times per day      |
 
 # Web Services #
 

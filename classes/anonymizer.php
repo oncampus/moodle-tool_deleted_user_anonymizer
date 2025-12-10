@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace tool_user_anonymizer;
+namespace tool_deleted_user_anonymizer;
 
 use context_system;
 use core\event\user_deleted;
 use dml_missing_record_exception;
-use tool_user_anonymizer\event\anonymization_triggered;
+use tool_deleted_user_anonymizer\event\anonymization_triggered;
 use moodle_exception;
 use coding_exception;
 use dml_exception;
@@ -27,7 +27,7 @@ use dml_exception;
 /**
  * Handles user anonymization logic.
  *
- * @package    tool_user_anonymizer
+ * @package    tool_deleted_user_anonymizer
  * @copyright  2025 Ramona Rommel <ramona.rommel@oncampus.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -111,7 +111,7 @@ class anonymizer {
                 'userid' => $userid,
                 'anonymizedate' => $anonymizedate,
             ];
-            $DB->insert_record('tool_user_anonymizer', $record);
+            $DB->insert_record('tool_deleted_user_anonymizer', $record);
         }
     }
 
@@ -135,7 +135,7 @@ class anonymizer {
             return;
         }
 
-        $delaydays = get_config('tool_user_anonymizer', 'delay');
+        $delaydays = get_config('tool_deleted_user_anonymizer', 'delay');
         $delaydays = $delaydays !== false ? (int)$delaydays : 0;
         $anonymizedate = strtotime("+$delaydays days");
 
@@ -144,6 +144,6 @@ class anonymizer {
             'anonymizedate' => $anonymizedate,
         ];
 
-        $DB->insert_record('tool_user_anonymizer', $record);
+        $DB->insert_record('tool_deleted_user_anonymizer', $record);
     }
 }
