@@ -17,7 +17,7 @@
 /**
  * Plugin strings are defined here.
  *
- * @package     tool_user_anonymizer
+ * @package     tool_deleted_user_anonymizer
  * @category    string
  * @copyright   2025 Ramona Rommel <ramona.rommel@oncampus.de>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['anonymization_confirm_text'] = 'Bist du sicher, dass du deine Daten anonymisieren möchtest? Diese Aktion kann nicht rückgängig gemacht werden.';
+$string['anonymization_confirm_text'] = 'Bist du sicher, dass du die Daten aller gelöschten Nutzer anonymisieren möchtest? Diese Aktion kann nicht rückgängig gemacht werden.';
 $string['anonymization_done'] = 'Anonymisierung gelöschter User wird beim nächsten Lauf durchgeführt.';
 $string['anonymization_running'] = 'Anonymisierung wird vorgemerkt.';
 $string['anonymize_manually_desc'] = 'Manuelle Anonymisierung gelöschter Nutzerkonten';
@@ -36,8 +36,6 @@ $string['delay_desc'] = 'Tage zwischen Löschung und Anonymisierung der Userdate
 $string['event_anonymization_triggered'] = 'Anonymisierung getriggert.';
 $string['plugin_setting'] = 'Verzögerung der Anonymisierung von Nutzerdaten';
 $string['pluginname'] = 'Anonymisierung von Nutzerdaten nach Löschung';
-$string['privacy:metadata:tool_user_anonymizer'] = 'Die Tabelle speichert Informationen zur Anonymisierung von gelöschten Nutzern.';
-$string['privacy:metadata:tool_user_anonymizer:anonymousdate'] = 'Das Datum der Anonymisierung.';
-$string['privacy:metadata:tool_user_anonymizer:userid'] = 'Die ID des anonymisierten Nutzers.';
+$string['privacy:metadata'] = 'Dieses Plugin nutzt nur Daten von gelöschten Nutzern, um diese zu anonymisieren.';
 $string['scheduled_anonymization'] = 'Geplante Anonymisierung';
 $string['start_anonymization'] = 'Starte Anonymisierung';

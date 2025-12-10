@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace tool_user_anonymizer\event;
+namespace tool_deleted_user_anonymizer\event;
 
 use coding_exception;
 use core\event\base;
@@ -23,7 +23,7 @@ use moodle_url;
 /**
  * Event: Anonymization was triggered by a user.
  *
- * @package   tool_user_anonymizer
+ * @package   tool_deleted_user_anonymizer
  * @copyright 2025 Ramona Rommel <ramona.rommel@oncampus.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -48,7 +48,7 @@ class anonymization_triggered extends base {
      * @throws coding_exception If the language string is missing or invalid.
      */
     public static function get_name(): string {
-        return get_string('event_anonymization_triggered', 'tool_user_anonymizer');
+        return get_string('event_anonymization_triggered', 'tool_deleted_user_anonymizer');
     }
 
     /**
@@ -58,7 +58,7 @@ class anonymization_triggered extends base {
      * @throws coding_exception
      */
     public function get_description(): string {
-        return get_string('anonymization_triggered_desc', 'tool_user_anonymizer', $this->userid);
+        return get_string('anonymization_triggered_desc', 'tool_deleted_user_anonymizer', $this->userid);
     }
 
     /**

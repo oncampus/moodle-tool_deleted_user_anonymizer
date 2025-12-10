@@ -17,7 +17,7 @@
 /**
  * class for scheduled task anonymization.
  *
- * @package   tool_user_anonymizer
+ * @package   tool_deleted_user_anonymizer
  * @copyright 2025 Ramona Rommel <ramona.rommel@oncampus.de>
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $tasks = [
     [
-        'classname' => 'tool_user_anonymizer\task\scheduled_anonymization',
+        'classname' => 'tool_deleted_user_anonymizer\task\scheduled_anonymization',
         'blocking'  => 0,
         'minute'    => '*',
         'hour'      => '*',

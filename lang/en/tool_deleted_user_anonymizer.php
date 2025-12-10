@@ -17,7 +17,7 @@
 /**
  * Plugin strings are defined here.
  *
- * @package     tool_user_anonymizer
+ * @package     tool_deleted_user_anonymizer
  * @category    string
  * @copyright   2025 oncampus GmbH <support@oncampus.de>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['anonymization_confirm_text'] = 'Are you sure you want to anonymize your data? This action cannot be undone.';
+$string['anonymization_confirm_text'] = 'Are you sure you want to anonymize the data of all deleted users? This action cannot be undone.';
 $string['anonymization_done'] = 'Anonymization of deleted users will be performed during the next scheduled run.';
 $string['anonymization_running'] = 'Anonymization has been scheduled.';
 $string['anonymize_manually_desc'] = 'Manual anonymization of deleted user accounts';
@@ -36,8 +36,6 @@ $string['delay_desc'] = 'Days between deletion and anonymization of user data';
 $string['event_anonymization_triggered'] = 'Anonymization triggered.';
 $string['plugin_setting'] = 'Delay for anonymizing user data';
 $string['pluginname'] = 'Anonymization of user data after deletion';
-$string['privacy:metadata:tool_user_anonymizer'] = 'The table saves information about the anonymization of deleted users.';
-$string['privacy:metadata:tool_user_anonymizer:anonymousdate'] = 'The date of the anonymization.';
-$string['privacy:metadata:tool_user_anonymizer:userid'] = 'The ID of the deleted user.';
+$string['privacy:metadata'] = 'This plugin only uses data of deleted users to anonymize them.';
 $string['scheduled_anonymization'] = 'Scheduled anonymization';
 $string['start_anonymization'] = 'Start anonymization';

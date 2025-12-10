@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace tool_user_anonymizer\task;
+namespace tool_deleted_user_anonymizer\task;
 
 use coding_exception;
 use core\task\scheduled_task;
 use dml_exception;
 use dml_missing_record_exception;
-use tool_user_anonymizer\anonymizer;
+use tool_deleted_user_anonymizer\anonymizer;
 use moodle_exception;
 use stdClass;
 
@@ -30,7 +30,7 @@ use stdClass;
  * This string is shown in the admin interface under
  * "Scheduled tasks".
  *
- * @package    tool_user_anonymizer
+ * @package    tool_deleted_user_anonymizer
  * @copyright  2025 Ramona Rommel <ramona.rommel@oncampus.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -44,7 +44,7 @@ class scheduled_anonymization extends scheduled_task {
      * @throws moodle_exception If something goes wrong during anonymization.
      */
     public function get_name(): string {
-        return get_string('scheduled_anonymization', 'tool_user_anonymizer');
+        return get_string('scheduled_anonymization', 'tool_deleted_user_anonymizer');
     }
 
     /**
@@ -63,9 +63,9 @@ class scheduled_anonymization extends scheduled_task {
     public function execute(): void {
         global $DB;
 
-        // Erstmal alle user aus der tool_users_anonymize holen.
+        // Get all user data from tool_users_anonymize database-table.
         $entries = $DB->get_records_select(
-            'tool_user_anonymizer',
+            'tool_deleted_user_anonymizer',
             'anonymizedate <= :now',
             ['now' => time()]
         );
@@ -78,15 +78,18 @@ class scheduled_anonymization extends scheduled_task {
                 continue;
             }
 
-            // Was brauchen wir alles?
-            $name = anonymizer::get_random_adjective();
-            $lastname = anonymizer::get_random_animal();
+            // Having identical usernames, even if deleted, is still a big nono so make sure we don't have that problem.
+            do {
+                $name = anonymizer::get_random_adjective();
+                $lastname = anonymizer::get_random_animal();
+                $time = time();
+            } while ($DB->record_exists('user', ['username' => $name . $lastname . $time]));
 
             $record = new stdClass();
             $record->id = $user->id;
             $record->firstname = $name;
             $record->lastname = $lastname;
-            $record->username = $name . $lastname . time();
+            $record->username = $name . $lastname . $time;
             $record->phone1 = '';
             $record->phone2 = '';
             $record->institution = '';
@@ -101,11 +104,12 @@ class scheduled_anonymization extends scheduled_task {
             $record->middlename = '';
             $record->alternatename = '';
             $record->moodlenetprofile = '';
+            $record->timemodified = $time;
 
             $DB->update_record('user', $record);
 
-            // Nach Anonymisierung Eintrag entfernen.
-            $DB->delete_records('tool_user_anonymizer', ['userid' => $user->id]);
+            // Remove Entry after anonymization.
+            $DB->delete_records('tool_deleted_user_anonymizer', ['userid' => $user->id]);
         }
     }
 }

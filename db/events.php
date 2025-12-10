@@ -17,7 +17,7 @@
 /**
  * Defines observer for user_deleted event.
  *
- * @package    tool_user_anonymizer
+ * @package    tool_deleted_user_anonymizer
  * @copyright  2025 Ramona Rommel <ramona.rommel@oncampus.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $observers = [
     [
         'eventname'   => '\core\event\user_deleted',
-        'callback'    => '\tool_user_anonymizer\anonymizer::anonymize_deleted_user',
+        'callback'    => '\tool_deleted_user_anonymizer\anonymizer::anonymize_deleted_user',
         'internal'    => false,
     ],
 ];

@@ -17,12 +17,12 @@
 /**
  * class for site to manually anonymize users. No logic
  *
- * @package     tool_user_anonymizer
+ * @package     tool_deleted_user_anonymizer
  * @copyright   2025 Ramona Rommel <ramona.rommel@oncampus.de>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use tool_user_anonymizer\anonymizer;
+use tool_deleted_user_anonymizer\anonymizer;
 
 require_once(__DIR__ . '/../../../config.php');
 
@@ -31,18 +31,18 @@ require_capability('moodle/site:config', context_system::instance());
 
 $PAGE->set_url(new moodle_url('/tool/user_anonymizer/trigger_anonymization.php'));
 $PAGE->set_context(context_system::instance());
-$PAGE->set_title(get_string('anonymize_now', 'tool_user_anonymizer'));
-$PAGE->set_heading(get_string('anonymize_now', 'tool_user_anonymizer'));
+$PAGE->set_title(get_string('anonymize_now', 'tool_deleted_user_anonymizer'));
+$PAGE->set_heading(get_string('anonymize_now', 'tool_deleted_user_anonymizer'));
 
 $anonymize = $USER->id;
 $confirm = optional_param('confirm', '', PARAM_ALPHANUM);
 
-$returnurl = new moodle_url('/admin/tool/user_anonymizer/trigger_anonymization.php');
+$returnurl = new moodle_url('/admin/tool/deleted_user_anonymizer/trigger_anonymization.php');
 
 if ($confirm != md5($anonymize)) {
     echo $OUTPUT->header();
 
-    $confirmurl = new moodle_url('/admin/tool/user_anonymizer/trigger_anonymization.php', [
+    $confirmurl = new moodle_url('/admin/tool/deleted_user_anonymizer/trigger_anonymization.php', [
         'confirm' => md5($anonymize),
         'anonymize' => $anonymize,
         'sesskey' => sesskey(),
@@ -52,7 +52,7 @@ if ($confirm != md5($anonymize)) {
     $denyurl->set_anchor('linkmodules');
 
     echo $OUTPUT->confirm(
-        get_string('anonymization_confirm_text', 'tool_user_anonymizer'),
+        get_string('anonymization_confirm_text', 'tool_deleted_user_anonymizer'),
         new single_button($confirmurl, get_string('yes')),
         $denyurl
     );
@@ -61,7 +61,7 @@ if ($confirm != md5($anonymize)) {
     die;
 }
 echo $OUTPUT->header();
-echo $OUTPUT->notification(get_string('anonymization_running', 'tool_user_anonymizer'), 'notifymessage');
+echo $OUTPUT->notification(get_string('anonymization_running', 'tool_deleted_user_anonymizer'), 'notifymessage');
 
 if (!confirm_sesskey()) {
     throw new moodle_exception('invalidsesskey');
@@ -69,7 +69,7 @@ if (!confirm_sesskey()) {
 
 try {
     anonymizer::manual_anonymization();
-    echo $OUTPUT->notification(get_string('anonymization_done', 'tool_user_anonymizer'), 'notifysuccess');
+    echo $OUTPUT->notification(get_string('anonymization_done', 'tool_deleted_user_anonymizer'), 'notifysuccess');
 } catch (Exception $e) {
     echo $OUTPUT->notification("Fehler bei der Anonymisierung: " . $e->getMessage(), 'notifyproblem');
 }
