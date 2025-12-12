@@ -87,7 +87,6 @@ class anonymizer {
      * Creates and fires the 'anonymization_triggered' event for the specified user,
      * and then schedules users for anonymization.
      *
-     * @param int $idtriggered The ID of the user for whom anonymization is triggered.
      * @throws coding_exception If the event cannot be created or triggered properly.
      * @throws dml_exception If a database error occurs while scheduling users.
      */

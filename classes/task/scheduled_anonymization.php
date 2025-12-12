@@ -23,6 +23,7 @@ use dml_missing_record_exception;
 use tool_deleted_user_anonymizer\anonymizer;
 use moodle_exception;
 use stdClass;
+use tool_deleted_user_anonymizer\event\anonymization_triggered;
 
 /**
  * Returns the name of the scheduled task.
@@ -107,6 +108,13 @@ class scheduled_anonymization extends scheduled_task {
             $record->timemodified = $time;
 
             $DB->update_record('user', $record);
+
+            $event = anonymization_triggered::create([
+                'context' => \context_system::instance(),
+                'userid' => $user->id,
+                'objectid' => $user->id,
+            ]);
+            $event->trigger();
 
             // Remove Entry after anonymization.
             $DB->delete_records('tool_deleted_user_anonymizer', ['userid' => $user->id]);

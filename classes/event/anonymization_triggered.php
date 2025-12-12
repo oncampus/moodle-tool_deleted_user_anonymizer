@@ -61,14 +61,14 @@ class anonymization_triggered extends base {
         return get_string('anonymization_triggered_desc', 'tool_deleted_user_anonymizer', $this->userid);
     }
 
-    /**
-     * Returns the URL related to the event.
-     *
-     * This is typically used in event reports/logs to link to the origin of the action.
-     *
-     * @return moodle_url URL to the anonymization script.
-     */
-    public function get_url(): moodle_url {
-        return new moodle_url('/admin/tool/deleted_user_anonymizer/trigger_anonymization.php');
-    }
+    // /**
+    //  * Returns the URL related to the event.
+    //  *
+    //  * This is typically used in event reports/logs to link to the origin of the action.
+    //  *
+    //  * @return moodle_url URL to the anonymization script.
+    //  */
+    // public function get_url(): moodle_url {
+    //     return new moodle_url('/admin/tool/deleted_user_anonymizer/trigger_anonymization.php');
+    // }
 }
