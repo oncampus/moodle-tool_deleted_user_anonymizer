@@ -30,10 +30,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.1', '8.2', '8.3']
-        moodle-branch: ['MOODLE_405_STABLE']
-        database: [pgsql, mariadb]
-
+        include:
+          # Moodle 4.5, PHP 8.1 to 8.3, PostgreSQL and MariaDB
+          - {moodle-branch: 'MOODLE_405_STABLE', php: '8.1', database: 'pgsql'}
+          - {moodle-branch: 'MOODLE_405_STABLE', php: '8.1', database: 'mariadb'}
+          - {moodle-branch: 'MOODLE_405_STABLE', php: '8.2', database: 'pgsql'}
+          - {moodle-branch: 'MOODLE_405_STABLE', php: '8.2', database: 'mariadb'}
+          - {moodle-branch: 'MOODLE_405_STABLE', php: '8.3', database: 'pgsql'}
+          - {moodle-branch: 'MOODLE_405_STABLE', php: '8.3', database: 'mariadb'}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -104,7 +108,6 @@ jobs:
         run: moodle-plugin-ci phpunit --fail-on-warning
 
       - name: Behat features
-        id: behat
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci behat --profile chrome --scss-deprecations
 
