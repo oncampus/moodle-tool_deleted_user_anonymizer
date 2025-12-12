@@ -68,7 +68,7 @@ class anonymization_triggered extends base {
      *
      * @return moodle_url URL to the anonymization script.
      */
-    public function get_url(): string {
-        return new moodle_url('/tool/user_anonymizer/anonymize.php');
+    public function get_url(): moodle_url {
+        return new moodle_url('/admin/tool/deleted_user_anonymizer/trigger_anonymization.php');
     }
 }
