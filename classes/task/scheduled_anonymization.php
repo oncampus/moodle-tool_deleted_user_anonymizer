@@ -79,18 +79,27 @@ class scheduled_anonymization extends scheduled_task {
                 continue;
             }
 
-            // Having identical usernames, even if deleted, is still a big nono so make sure we don't have that problem.
-            do {
-                $name = anonymizer::get_random_adjective();
-                $lastname = anonymizer::get_random_animal();
-                $time = time();
-            } while ($DB->record_exists('user', ['username' => $name . $lastname . $time]));
+            $userandomname = get_config('tool_deleted_user_anonymizer', 'userandomname');
+            $time = time();
+
+            if ($userandomname) {
+                // Having identical usernames, even if deleted, is still a big nono so make sure we don't have that problem.
+                do {
+                    $name = anonymizer::get_random_adjective();
+                    $lastname = anonymizer::get_random_animal();
+                    $username = $name . $lastname . $time;
+                } while ($DB->record_exists('user', ['username' => $username]));
+            } else {
+                $name = get_string('default_firstname', 'tool_deleted_user_anonymizer');
+                $lastname = get_string('default_lastname', 'tool_deleted_user_anonymizer');
+                $username = 'anonymized_user_' . $user->id;
+            }
 
             $record = new stdClass();
             $record->id = $user->id;
             $record->firstname = $name;
             $record->lastname = $lastname;
-            $record->username = $name . $lastname . $time;
+            $record->username = $username;
             $record->phone1 = '';
             $record->phone2 = '';
             $record->institution = '';

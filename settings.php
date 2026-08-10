@@ -51,6 +51,12 @@ if ($hassiteconfig) {
             0,
             PARAM_INT
         ));
+        $settings->add(new admin_setting_configcheckbox(
+            'tool_deleted_user_anonymizer/userandomname',
+            get_string('userandomname', 'tool_deleted_user_anonymizer'),
+            get_string('userandomname_desc', 'tool_deleted_user_anonymizer'),
+            1
+        ));
     }
 
     $ADMIN->add('tool_deleted_user_anonymizer_folder', new admin_externalpage(
