@@ -18,7 +18,6 @@ namespace tool_deleted_user_anonymizer\event;
 
 use coding_exception;
 use core\event\base;
-use moodle_url;
 
 /**
  * Event: Anonymization was triggered by a user.

@@ -100,7 +100,7 @@ class anonymizer {
             $userid = $user->id;
 
             $event = anonymization_triggered::create([
-                'context' => \context_system::instance(),
+                'context' => context_system::instance(),
                 'userid' => $userid,
                 'objectid' => $userid,
             ]);

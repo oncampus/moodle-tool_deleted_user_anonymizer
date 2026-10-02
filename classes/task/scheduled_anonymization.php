@@ -17,6 +17,7 @@
 namespace tool_deleted_user_anonymizer\task;
 
 use coding_exception;
+use context_system;
 use core\task\scheduled_task;
 use dml_exception;
 use dml_missing_record_exception;
@@ -119,7 +120,7 @@ class scheduled_anonymization extends scheduled_task {
             $DB->update_record('user', $record);
 
             $event = anonymization_triggered::create([
-                'context' => \context_system::instance(),
+                'context' => context_system::instance(),
                 'userid' => $user->id,
                 'objectid' => $user->id,
             ]);

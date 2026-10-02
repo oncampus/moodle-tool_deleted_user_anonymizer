@@ -20,7 +20,8 @@ use advanced_testcase;
 use coding_exception;
 use context_system;
 use dml_exception;
-use Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use tool_deleted_user_anonymizer\event\anonymization_triggered;
 use tool_deleted_user_anonymizer\task\scheduled_anonymization;
 use moodle_exception;
@@ -32,11 +33,15 @@ use moodle_exception;
  * @copyright 2025 Ramona Rommel <ramona.rommel@oncampus.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[CoversClass(anonymization_triggered::class)]
+#[CoversMethod(anonymizer::class, 'manual_anonymization')]
+#[CoversMethod(anonymizer::class, 'anonymize_deleted_user')]
+#[CoversMethod(anonymizer::class, 'get_random_animal')]
+#[CoversMethod(anonymizer::class, 'get_random_adjective')]
+#[CoversMethod(scheduled_anonymization::class, 'execute')]
 final class anonymizer_test extends advanced_testcase {
     /**
      * Tests whether the anonymization_triggered event is correctly triggered and logged.
-     *
-     * @covers \tool_deleted_user_anonymizer\event\anonymization_triggered
      *
      * @throws coding_exception If user creation or event triggering fails internally.
      * @throws dml_exception If database error occurs.
@@ -46,10 +51,10 @@ final class anonymizer_test extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        // Test-User erstellen.
+        // Create test user.
         $this->setUser($this->getDataGenerator()->create_user());
 
-        // Event auslösen.
+        // Trigger event.
         $event = anonymization_triggered::create([
             'objectid' => $USER->id,
             'userid' => $USER->id,
@@ -69,87 +74,71 @@ final class anonymizer_test extends advanced_testcase {
     }
 
     /**
-     * Creates test data JSON files for adjectives and animals used in anonymization.
+     * Tests that the scheduled task anonymizes a deleted user whose anonymizedate is due.
      *
-     * This method generates `adjectives.json` and `animals.json` in the plugin's
-     * data directory, containing sample values for testing purposes.
+     * Verifies that name and username are replaced, personal fields are cleared,
+     * the anonymization_triggered event is fired and the entry in
+     * tool_deleted_user_anonymizer is removed afterwards.
      *
-     * @covers anonymizer::get_random_adjective
-     * @covers anonymizer::get_random_animal
-     *
-     * @throws Exception If file creation or writing fails.
-     */
-    private function create_test_data_json(): void {
-        // Testdaten für Adjektive.
-        $adjectives = ['Happy', 'Blue', 'Crazy'];
-        $animals = ['Tiger', 'Penguin', 'Elephant'];
-
-        $datadir = __DIR__ . '/../classes/tests/data';
-        if (!is_dir($datadir)) {
-            mkdir($datadir, 0777, true);
-        }
-
-        file_put_contents($datadir . '/adjectives.json', json_encode($adjectives));
-        file_put_contents($datadir . '/animals.json', json_encode($animals));
-    }
-
-    /**
-     * Runs the anonymization process for all users whose anonymizedate is due.
-     *
-     * Retrieves entries from the tool_deleted_user_anonymizer table where the
-     * anonymizedate is not null and has passed, fetches the corresponding
-     * deleted users, anonymizes them by replacing personal data, and removes
-     * the anonymizer entry after completion.
-     *
-     * @covers \tool_deleted_user_anonymizer\task\scheduled_anonymization::execute
-     *
-     * @throws moodle_exception If required data files (adjectives.json or animals.json) are missing or unreadable.
-     * @throws Exception If file creation or writing fails.
+     * @throws dml_exception If database error occurs.
+     * @throws coding_exception
+     * @throws moodle_exception If the word lists (adjectives.json or animals.json) are missing or empty.
      */
     public function test_run_user_anonymizer(): void {
         global $DB;
 
         $this->resetAfterTest();
 
-        // Dummy Daten für adjective/animal.
-        $this->create_test_data_json();
+        // 1. Create deleted user.
+        $user = $this->getDataGenerator()->create_user(
+            [
+                'deleted' => 1,
+                'phone1' => '00012345',
+                'city' => 'Luebeck',
+                'description' => 'Epic description',
+            ]
+        );
+        // The generator deletes the user via delete_user(), so the observer already scheduled it. Start clean.
+        $DB->delete_records('tool_deleted_user_anonymizer', ['userid' => $user->id]);
 
-        // 1. Gelöschten Nutzer erstellen.
-        $user = $this->getDataGenerator()->create_user(['deleted' => 1]);
-
-        // 2. Eintrag in tool_deleted_user_anonymizer mit anonymizedate in der Vergangenheit.
+        // 2. Add entry to tool_deleted_user_anonymizer with anonymizedate in the past.
         $DB->insert_record('tool_deleted_user_anonymizer', (object)[
             'userid' => $user->id,
             'anonymizedate' => time() - 60,
         ]);
 
-        // 3. anonymisierung durchführen.
+        // 3. Run anonymization.
+        $sink = $this->redirectEvents();
         $task = new scheduled_anonymization();
         $task->execute();
+        $events = array_filter($sink->get_events(), fn($e) => $e instanceof anonymization_triggered);
+        $sink->close();
 
-        // 4. User erneut aus DB holen.
+        // 4. Fetch user from DB again.
         $anon = $DB->get_record('user', ['id' => $user->id]);
 
-        // 5. Sicherstellen, dass der Name ersetzt wurde.
+        // 5. Ensure that the name has been replaced.
         $this->assertNotEquals($user->firstname, $anon->firstname);
         $this->assertNotEquals($user->lastname, $anon->lastname);
         $this->assertNotEquals($user->username, $anon->username);
 
-        // 6. Sicherstellen, dass Felder geleert wurden.
+        // 6. Ensure that fields have been cleared.
         $this->assertEmpty($anon->phone1);
         $this->assertEmpty($anon->city);
         $this->assertEmpty($anon->description);
 
-        // 7. Sicherstellen, dass der Anonymisierungseintrag entfernt wurde.
+        // 7. Ensure that the anonymization entry has been removed.
         $exists = $DB->record_exists('tool_deleted_user_anonymizer', ['userid' => $user->id]);
         $this->assertFalse($exists);
+
+        // 8. Ensure that the anonymization_triggered event has been fired for the user.
+        $this->assertCount(1, $events);
+        $this->assertEquals($user->id, reset($events)->objectid);
     }
 
     /**
      * Tests if manual anonymization correctly schedules the user for anonymization
-     * in table tool_user_anonymization
-     *
-     * @covers \anonymizer::manual_anonymization
+     * in table tool_deleted_user_anonymizer and fires the anonymization_triggered event.
      *
      * @throws dml_exception If database error occurs
      * @throws coding_exception
@@ -159,22 +148,25 @@ final class anonymizer_test extends advanced_testcase {
 
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user(['deleted' => 1]);
+        // The generator deletes the user via delete_user(), so the observer already scheduled it. Start clean.
+        $DB->delete_records('tool_deleted_user_anonymizer', ['userid' => $user->id]);
 
-        set_config('delay', 3, 'tool_deleted_user_anonymizer');
-
+        $sink = $this->redirectEvents();
         anonymizer::manual_anonymization();
+        $events = array_filter($sink->get_events(), fn($e) => $e instanceof anonymization_triggered);
+        $sink->close();
 
+        // Manual anonymization takes effect immediately, without the configured delay.
         $record = $DB->get_record('tool_deleted_user_anonymizer', ['userid' => $user->id]);
         $this->assertNotEmpty($record);
-        $expected = strtotime('+3 days');
-        $this->assertGreaterThanOrEqual($expected - 5, $record->anonymizedate);
-        $this->assertLessThanOrEqual($expected + 5, $record->anonymizedate);
+        $this->assertEqualsWithDelta(time(), $record->anonymizedate, 5);
+
+        $this->assertCount(1, $events);
+        $this->assertEquals($user->id, reset($events)->objectid);
     }
 
     /**
      * Tests that the user_deleted event triggers scheduling for anonymization.
-     *
-     * @covers \tool_deleted_user_anonymizer\anonymizer::anonymize_deleted_user
      *
      * @throws dml_exception If database error occurs.
      * @throws coding_exception
@@ -184,10 +176,10 @@ final class anonymizer_test extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        // Verzögerung setzen.
+        // Set delay.
         set_config('delay', 2, 'tool_deleted_user_anonymizer');
 
-        // User erstellen und sofort löschen.
+        // Create user and delete immediately.
         $user = $this->getDataGenerator()->create_user();
         delete_user($user);
 
@@ -195,7 +187,6 @@ final class anonymizer_test extends advanced_testcase {
         $this->assertNotEmpty($record);
 
         $expected = strtotime('+2 days');
-        $this->assertGreaterThanOrEqual($expected - 5, $record->anonymizedate);
-        $this->assertLessThanOrEqual($expected + 5, $record->anonymizedate);
+        $this->assertEqualsWithDelta($expected, $record->anonymizedate, 5);
     }
 }

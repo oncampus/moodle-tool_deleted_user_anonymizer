@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tool_deleted_user_anonymizer';
-$plugin->release = '4.5.2';
-$plugin->version = 2025121201;
-$plugin->requires = 2024100700;
+$plugin->release = '5.2.0';
+$plugin->version = 2026042000;
+$plugin->requires = 2026042000;
 $plugin->maturity = MATURITY_STABLE;
