@@ -2,10 +2,10 @@
 include:
   - project: "moodle/ci-tools/moodle-pipeline"
     file: "/moodle-pipeline.yml"
-    ref: MOODLE_502_STABLE
+    ref: MOODLE_503_STABLE
   - project: "moodle/ci-tools/moodle-testing-pipeline"
     file: "/moodle-testing-pipeline.yml"
-    ref: MOODLE_502_STABLE_DEPENDENCIES
+    ref: MOODLE_503_STABLE_DEPENDENCIES
 
 stages:
   - linting
