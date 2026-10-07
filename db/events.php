@@ -28,6 +28,5 @@ $observers = [
     [
         'eventname'   => '\core\event\user_deleted',
         'callback'    => '\tool_deleted_user_anonymizer\anonymizer::anonymize_deleted_user',
-        'internal'    => false,
     ],
 ];
